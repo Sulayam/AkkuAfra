@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ahsan & Afra — Wedding Invitation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --pink-50:  #FFF8FA;
+      --pink-100: #FFEEF3;
+      --pink-200: #FFD9E4;
+      --sakura:   #FFB7C5;
+      --sakura-d: #E8879A;
+      --gold:     #C9A96E;
+      --gold-d:   #9A7A45;
+      --text-900: #2C1A12;
+      --text-600: #7B5B4E;
+      --text-300: #B8A09A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: var(--pink-50);
+      color: var(--text-900);
+      overflow-x: hidden;
+    }
+
+    /* ─── Sakura Canvas ─── */
+    #petal-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── Cover ─── */
+    #cover {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      background: radial-gradient(ellipse at 50% 30%, #fff 0%, var(--pink-100) 45%, #FFD0DC 100%);
+      transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
+    }
+
+    #cover.exit {
+      opacity: 0;
+      transform: scale(0.95) translateY(-16px);
+      pointer-events: none;
+    }
+
+    /* Photo frame */
+    .cover-photo-wrap {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .cover-photo-ring {
+      width: min(200px, 52vw);
+      height: min(200px, 52vw);
+      border-radius: 50%;
+      border: 2.5px solid var(--gold);
+      box-shadow:
+        0 0 0 10px rgba(255,183,197,0.15),
+        0 0 0 20px rgba(255,183,197,0.07),
+        0 20px 60px rgba(201,169,110,0.22);
+      overflow: hidden;
+      background: linear-gradient(135deg, #FFD0DC 0%, var(--pink-100) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+    }
+
+    .cover-photo-ring img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Corner sakura decorations */
+    .cover-deco {
+      position: absolute;
+      font-size: 22px;
+      opacity: 0.55;
+    }
+    .cover-deco.tl { top: -10px; left: -14px; transform: rotate(-30deg); }
+    .cover-deco.tr { top: -10px; right: -14px; transform: rotate(30deg); }
+    .cover-deco.bl { bottom: -8px; left: -12px; transform: rotate(20deg); }
+    .cover-deco.br { bottom: -8px; right: -12px; transform: rotate(-20deg); }
+
+    .cover-eyebrow {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold-d);
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .cover-names {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .cover-first { font-size: clamp(46px, 12vw, 76px); display: block; color: var(--text-900); }
+    .cover-amp   { font-size: clamp(30px, 7.5vw, 48px); font-style: italic; color: var(--gold); display: block; margin: 2px 0; }
+    .cover-last  { font-size: clamp(46px, 12vw, 76px); display: block; color: var(--text-900); }
+
+    .cover-rule {
+      width: 56px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin: 22px auto;
+    }
+
+    .cover-btn {
+      font-family: 'Raleway', sans-serif;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold-d);
+      background: transparent;
+      border: 1.5px solid var(--gold);
+      padding: 13px 30px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: background .3s, color .3s, box-shadow .3s, transform .2s;
+    }
+
+    .cover-btn:hover, .cover-btn:active {
+      background: var(--gold);
+      color: #fff;
+      box-shadow: 0 8px 28px rgba(201,169,110,.38);
+      transform: translateY(-2px);
+    }
+
+    /* ─── Music Button ─── */
+    #music-btn {
+      position: fixed;
+      bottom: 22px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(201,169,110,.45);
+      z-index: 200;
+      transition: transform .2s, background .2s;
+    }
+    #music-btn.muted { background: var(--pink-200); }
+    #music-btn:hover { transform: scale(1.1); }
+    #music-btn svg { width: 20px; height: 20px; fill: white; }
+
+    /* ─── Invitation Body ─── */
+    #invitation {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .85s ease .15s, transform .85s ease .15s;
+    }
+    #invitation.in { opacity: 1; transform: none; }
+
+    /* Bismillah */
+    .bismillah-section {
+      text-align: center;
+      padding: 60px 0 24px;
+    }
+    .bismillah-arabic {
+      font-family: 'Scheherazade New', serif;
+      font-size: clamp(28px, 7vw, 44px);
+      color: var(--gold-d);
+      line-height: 2;
+    }
+    .bismillah-verse {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(14px, 3.5vw, 16px);
+      color: var(--text-600);
+      line-height: 1.95;
+      max-width: 360px;
+      margin: 14px auto 0;
+    }
+    .bismillah-ref {
+      display: block;
+      font-size: 0.82em;
+      color: var(--gold-d);
+      margin-top: 6px;
+      font-style: normal;
+      letter-spacing: 1px;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 8px 0;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--pink-200), transparent);
+    }
+    .divider-blossom { font-size: 18px; opacity: .65; }
+
+    /* Couple section */
+    .couple-section {
+      text-align: center;
+      padding: 40px 0;
+    }
+    .couple-eyebrow {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-300);
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+    .couple-names {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      line-height: 0.95;
+    }
+    .cn-name { font-size: clamp(54px, 14vw, 90px); display: block; color: var(--text-900); }
+    .cn-amp  { font-size: clamp(36px, 9vw, 58px); font-style: italic; color: var(--gold); display: block; margin: 6px 0; }
+
+    .family-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 28px;
+    }
+    .family-entry { font-size: 14px; color: var(--text-600); line-height: 1.75; }
+    .family-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold-d);
+      margin-bottom: 3px;
+    }
+
+    /* Events */
+    .events-section { padding: 16px 0 32px; }
+    .events-eyebrow {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--text-300);
+      margin-bottom: 22px;
+    }
+
+    .event-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 26px 22px;
+      margin-bottom: 14px;
+      border: 1px solid #FFDDE6;
+      box-shadow: 0 4px 28px rgba(255,183,197,.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .event-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--sakura), var(--gold));
+    }
+    .event-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text-900);
+      margin-bottom: 16px;
+    }
+    .event-row {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .event-icon { font-size: 14px; padding-top: 3px; flex-shrink: 0; }
+    .event-info { font-size: 13.5px; color: var(--text-600); line-height: 1.65; }
+    .event-info strong { display: block; color: var(--text-900); font-weight: 600; }
+    .map-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 14px;
+      padding: 8px 18px;
+      background: linear-gradient(135deg, var(--sakura), #e09ab0);
+      color: white;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 24px;
+      transition: opacity .2s, transform .2s;
+    }
+    .map-btn:hover { opacity: .86; transform: translateY(-1px); }
+
+    /* Countdown */
+    .countdown-section {
+      text-align: center;
+      padding: 40px 0;
+    }
+    .countdown-label {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-300);
+      margin-bottom: 26px;
+    }
+    .countdown-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 6px;
+    }
+    .cd-unit { text-align: center; }
+    .cd-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(42px, 11vw, 66px);
+      font-weight: 300;
+      color: var(--text-900);
+      line-height: 1;
+      display: block;
+      min-width: 2ch;
+    }
+    .cd-lbl { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-300); margin-top: 4px; }
+    .cd-sep {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      color: var(--gold);
+      line-height: 1;
+      padding-top: 2px;
+      opacity: .6;
+    }
+
+    /* Footer */
+    .footer-section {
+      text-align: center;
+      padding: 36px 20px 20px;
+      border-top: 1px solid #FFDDE6;
+    }
+    .footer-blossoms { font-size: 26px; opacity: .5; margin-bottom: 16px; letter-spacing: 8px; }
+    .footer-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: var(--text-600);
+      line-height: 1.85;
+    }
+    .footer-couple {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-900);
+      margin-top: 8px;
+    }
+    .footer-sub {
+      font-size: 12px;
+      color: var(--text-300);
+      margin-top: 14px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sakura petal canvas -->
+<canvas id="petal-canvas"></canvas>
+
+<!-- Background music — replace nasheed.mp3 with the actual file name when ready -->
+<audio id="bgm" loop preload="none">
+  <source src="nasheed.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Music toggle (appears after cover) -->
+<button id="music-btn" aria-label="Toggle music">
+  <!-- Note icon -->
+  <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+</button>
+
+<!-- ══════════ COVER ══════════ -->
+<section id="cover">
+
+  <div class="cover-photo-wrap">
+    <div class="cover-photo-ring">
+      <!-- TO ADD PHOTO: replace the 🌸 below with:
+           <img src="images/couple.jpg" alt="Ahsan & Afra">
+      -->
+      🌸
+    </div>
+    <span class="cover-deco tl">🌸</span>
+    <span class="cover-deco tr">🌸</span>
+    <span class="cover-deco bl">🌿</span>
+    <span class="cover-deco br">🌿</span>
+  </div>
+
+  <div class="cover-eyebrow">You are cordially invited</div>
+
+  <div class="cover-names">
+    <span class="cover-first">Ahsan</span>
+    <span class="cover-amp">&amp;</span>
+    <span class="cover-last">Afra</span>
+  </div>
+
+  <div class="cover-rule"></div>
+
+  <button class="cover-btn" onclick="openInvitation()">Open Invitation ✦</button>
+
+</section>
+
+<!-- ══════════ INVITATION ══════════ -->
+<main id="invitation" hidden>
+
+  <!-- Bismillah -->
+  <div class="bismillah-section">
+    <div class="bismillah-arabic">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+    <p class="bismillah-verse">
+      "And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy."
+      <span class="bismillah-ref">— Quran 30:21</span>
+    </p>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-blossom">🌸</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Couple -->
+  <div class="couple-section">
+    <p class="couple-eyebrow">Together with their families</p>
+    <div class="couple-names">
+      <span class="cn-name">Ahsan</span>
+      <span class="cn-amp">&amp;</span>
+      <span class="cn-name">Afra</span>
+    </div>
+    <div class="family-grid">
+      <div class="family-entry">
+        <span class="family-label">Son of</span>
+        Mr. [Father's Name] &amp; Mrs. [Mother's Name]
+      </div>
+      <div class="family-entry">
+        <span class="family-label">Daughter of</span>
+        Mr. [Father's Name] &amp; Mrs. [Mother's Name]
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-blossom">🌸</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Events -->
+  <div class="events-section">
+    <p class="events-eyebrow">Joyfully invite you to celebrate</p>
+
+    <!-- Wedding -->
+    <div class="event-card">
+      <div class="event-title">Wedding</div>
+      <div class="event-row">
+        <span class="event-icon">📅</span>
+        <div class="event-info">
+          <strong>[Day], [Date], [Year]</strong>
+          [Time] onwards
+        </div>
+      </div>
+      <div class="event-row">
+        <span class="event-icon">📍</span>
+        <div class="event-info">
+          <strong>[Venue Name]</strong>
+          [Address, City]
+        </div>
+      </div>
+      <a class="map-btn" href="https://maps.google.com/?q=Venue+Address" target="_blank" rel="noopener">
+        📍 View on Map
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-blossom">🌸</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Countdown -->
+  <div class="countdown-section">
+    <div class="countdown-label">Counting down to the big day</div>
+    <div class="countdown-row">
+      <div class="cd-unit">
+        <span class="cd-num" id="cd-d">--</span>
+        <div class="cd-lbl">Days</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <span class="cd-num" id="cd-h">--</span>
+        <div class="cd-lbl">Hrs</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <span class="cd-num" id="cd-m">--</span>
+        <div class="cd-lbl">Min</div>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <span class="cd-num" id="cd-s">--</span>
+        <div class="cd-lbl">Sec</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-section">
+    <div class="footer-blossoms">🌸 🌿 🌸</div>
+    <div class="footer-quote">
+      With love &amp; joy,
+    </div>
+    <div class="footer-couple">Ahsan &amp; Afra</div>
+    <p class="footer-sub">We look forward to celebrating with you ♡</p>
+  </div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════
+// SAKURA PETALS — Canvas Animation
+// ═══════════════════════════════════
+const canvas = document.getElementById('petal-canvas');
+const ctx    = canvas.getContext('2d');
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const PETAL_COLORS = ['#FFB7C5','#FFCDD6','#FF9BAC','#FFD6DE','#FFC0CB','#FFAEC0'];
+const PETAL_COUNT  = 24;
+const petals = [];
+
+class Petal {
+  constructor(init) {
+    this.reset(init);
+  }
+  reset(init = false) {
+    this.x        = Math.random() * canvas.width;
+    this.y        = init ? Math.random() * -canvas.height * 1.5 : -20;
+    this.r        = Math.random() * 9 + 5;         // 5–14 px radius
+    this.vx       = (Math.random() - 0.5) * 0.7;
+    this.vy       = Math.random() * 1.0 + 0.45;
+    this.angle    = Math.random() * Math.PI * 2;
+    this.spin     = (Math.random() - 0.5) * 0.035;
+    this.swayAng  = Math.random() * Math.PI * 2;
+    this.swaySpd  = Math.random() * 0.018 + 0.008;
+    this.sway     = Math.random() * 0.9 + 0.2;
+    this.color    = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+    this.alpha    = Math.random() * 0.45 + 0.3;
+  }
+  update() {
+    this.swayAng += this.swaySpd;
+    this.x       += this.vx + Math.sin(this.swayAng) * this.sway;
+    this.y       += this.vy;
+    this.angle   += this.spin;
+    if (this.y > canvas.height + 30) this.reset(false);
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.globalAlpha = this.alpha;
+
+    // Sakura petal — two overlapping ellipses at slight angle
+    ctx.beginPath();
+    ctx.ellipse(0, 0, this.r * 0.55, this.r, 0, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(0, 0, this.r * 0.55, this.r, Math.PI / 5, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+
+    // Soft highlight
+    ctx.beginPath();
+    ctx.ellipse(0, -this.r * 0.2, this.r * 0.25, this.r * 0.35, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < PETAL_COUNT; i++) petals.push(new Petal(true));
+
+(function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  petals.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(loop);
+})();
+
+
+// ═══════════════════════════════════
+// COVER → INVITATION TRANSITION
+// ═══════════════════════════════════
+function openInvitation() {
+  const cover = document.getElementById('cover');
+  const inv   = document.getElementById('invitation');
+  const btn   = document.getElementById('music-btn');
+
+  cover.classList.add('exit');
+
+  setTimeout(() => {
+    cover.hidden = true;
+    inv.hidden   = false;
+    btn.style.display = 'flex';
+
+    // Force reflow then animate in
+    requestAnimationFrame(() => requestAnimationFrame(() => inv.classList.add('in')));
+
+    tryAutoplay();
+  }, 900);
+}
+
+
+// ═══════════════════════════════════
+// MUSIC
+// ═══════════════════════════════════
+const bgm    = document.getElementById('bgm');
+const musBtn = document.getElementById('music-btn');
+let playing  = false;
+
+function tryAutoplay() {
+  bgm.volume = 0.32;
+  bgm.play().then(() => {
+    playing = true;
+    musBtn.classList.remove('muted');
+  }).catch(() => {
+    // Autoplay blocked — user can tap the button
+    musBtn.classList.add('muted');
+  });
+}
+
+musBtn.addEventListener('click', () => {
+  if (playing) {
+    bgm.pause();
+    playing = false;
+    musBtn.classList.add('muted');
+  } else {
+    bgm.play();
+    playing = true;
+    musBtn.classList.remove('muted');
+  }
+});
+
+
+// ═══════════════════════════════════
+// COUNTDOWN
+// ═══════════════════════════════════
+// ← UPDATE THIS DATE to the actual wedding day
+const WEDDING = new Date(2026, 5, 28, 12, 0, 0); // June 28 2026, 12:00
+
+function tick() {
+  const diff = WEDDING - Date.now();
+  if (diff <= 0) {
+    ['cd-d','cd-h','cd-m','cd-s'].forEach(id => document.getElementById(id).textContent = '00');
+    return;
+  }
+  const d = Math.floor(diff / 864e5);
+  const h = Math.floor(diff % 864e5 / 36e5);
+  const m = Math.floor(diff % 36e5 / 6e4);
+  const s = Math.floor(diff % 6e4 / 1e3);
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('cd-d').textContent = pad(d);
+  document.getElementById('cd-h').textContent = pad(h);
+  document.getElementById('cd-m').textContent = pad(m);
+  document.getElementById('cd-s').textContent = pad(s);
+}
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
