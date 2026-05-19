@@ -1,2 +1,2 @@
 .DS_Store
-*.mp3
+# nasheed.mp3 is included — run download-nasheed.sh to generate it first

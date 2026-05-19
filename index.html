@@ -3,446 +3,287 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ahsan & Afra — Wedding Invitation</title>
+  <title>Ahsan &amp; Afra — Wedding Invitation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Raleway:wght@300;400;500;600&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --pink-50:  #FFF8FA;
-      --pink-100: #FFEEF3;
-      --pink-200: #FFD9E4;
+      --pink-50:  #FFFAFB;
+      --pink-100: #FFEEF4;
+      --pink-200: #FFD9E5;
+      --pink-300: #FFB8CB;
       --sakura:   #FFB7C5;
       --sakura-d: #E8879A;
       --gold:     #C9A96E;
       --gold-d:   #9A7A45;
+      --gold-l:   #EDD9A8;
       --text-900: #2C1A12;
-      --text-600: #7B5B4E;
-      --text-300: #B8A09A;
+      --text-500: #8B6B5E;
+      --text-300: #C4A89E;
     }
 
     html { scroll-behavior: smooth; }
+    body { font-family: 'Raleway', sans-serif; background: var(--pink-50); color: var(--text-900); overflow-x: hidden; }
 
-    body {
-      font-family: 'Raleway', sans-serif;
-      background: var(--pink-50);
-      color: var(--text-900);
-      overflow-x: hidden;
+    /* ── Sakura Canvas ── */
+    #petal-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+
+    /* ════════════════ SCENE (envelope stage) ════════════════ */
+    #scene {
+      position: fixed; inset: 0; z-index: 500;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at 50% 40%, #FFFFFF 0%, #FFF4F8 44%, #FFD8E8 100%);
     }
 
-    /* ─── Sakura Canvas ─── */
-    #petal-canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ─── Cover ─── */
-    #cover {
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 24px;
-      background: radial-gradient(ellipse at 50% 30%, #fff 0%, var(--pink-100) 45%, #FFD0DC 100%);
-      transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
-    }
-
-    #cover.exit {
-      opacity: 0;
-      transform: scale(0.95) translateY(-16px);
-      pointer-events: none;
-    }
-
-    /* Photo frame */
-    .cover-photo-wrap {
+    #envelope {
       position: relative;
-      margin-bottom: 28px;
+      width: min(300px, 82vw);
+      height: min(430px, 118vw);
+      cursor: pointer;
+      filter: drop-shadow(0 24px 56px rgba(201,169,110,0.22)) drop-shadow(0 8px 20px rgba(255,183,197,0.2));
+      opacity: 0;
     }
 
-    .cover-photo-ring {
-      width: min(200px, 52vw);
-      height: min(200px, 52vw);
-      border-radius: 50%;
-      border: 2.5px solid var(--gold);
-      box-shadow:
-        0 0 0 10px rgba(255,183,197,0.15),
-        0 0 0 20px rgba(255,183,197,0.07),
-        0 20px 60px rgba(201,169,110,0.22);
-      overflow: hidden;
-      background: linear-gradient(135deg, #FFD0DC 0%, var(--pink-100) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 56px;
+    /* Envelope body */
+    .env-body {
+      position: absolute; inset: 0;
+      background: linear-gradient(170deg, #FFF8FB 0%, #FFEDF4 60%, #FFE2EE 100%);
+      border-radius: 10px;
+      border: 1.5px solid rgba(201,169,110,0.35);
+      overflow: hidden; z-index: 1;
+    }
+    .env-body::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(255,183,197,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(201,169,110,0.08) 0%, transparent 50%);
     }
 
-    .cover-photo-ring img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    /* Interior (behind open flap) */
+    .env-interior {
+      position: absolute; top: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(180deg, #FFD0E0 0%, #FFE8F2 80%, transparent 100%);
+      border-radius: 10px 10px 0 0;
+      z-index: 2;
+      display: flex; align-items: center; justify-content: center; padding-top: 12px;
     }
-
-    /* Corner sakura decorations */
-    .cover-deco {
-      position: absolute;
-      font-size: 22px;
-      opacity: 0.55;
-    }
-    .cover-deco.tl { top: -10px; left: -14px; transform: rotate(-30deg); }
-    .cover-deco.tr { top: -10px; right: -14px; transform: rotate(30deg); }
-    .cover-deco.bl { bottom: -8px; left: -12px; transform: rotate(20deg); }
-    .cover-deco.br { bottom: -8px; right: -12px; transform: rotate(-20deg); }
-
-    .cover-eyebrow {
-      font-size: 10px;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      color: var(--gold-d);
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
-
-    .cover-names {
-      text-align: center;
+    .env-interior-text {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      line-height: 1;
+      font-style: italic; font-size: 13px;
+      color: rgba(156,100,120,0.5); letter-spacing: 3px;
     }
 
-    .cover-first { font-size: clamp(46px, 12vw, 76px); display: block; color: var(--text-900); }
-    .cover-amp   { font-size: clamp(30px, 7.5vw, 48px); font-style: italic; color: var(--gold); display: block; margin: 2px 0; }
-    .cover-last  { font-size: clamp(46px, 12vw, 76px); display: block; color: var(--text-900); }
-
-    .cover-rule {
-      width: 56px; height: 1px;
-      background: linear-gradient(to right, transparent, var(--gold), transparent);
-      margin: 22px auto;
+    /* Bottom decorative V fold */
+    .env-bottom-fold {
+      position: absolute; bottom: 0; left: -1px; right: -1px; height: 52%;
+      background: linear-gradient(0deg, rgba(255,224,236,0.6) 0%, transparent 100%);
+      clip-path: polygon(0 100%, 50% 0%, 100% 100%);
+      z-index: 3;
     }
 
-    .cover-btn {
-      font-family: 'Raleway', sans-serif;
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--gold-d);
-      background: transparent;
-      border: 1.5px solid var(--gold);
-      padding: 13px 30px;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: background .3s, color .3s, box-shadow .3s, transform .2s;
+    /* Card inside */
+    #env-card {
+      position: absolute; bottom: 6px; left: 8px; right: 8px; height: 84%;
+      background: white; border-radius: 12px 12px 6px 6px;
+      z-index: 4; transform: translateY(82%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px;
+      overflow: hidden;
+      box-shadow: 0 -4px 28px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    .env-card-blossom { font-size: 22px; opacity: 0.55; }
+    .env-card-names { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(22px, 5.5vw, 32px); color: var(--text-900); text-align: center; line-height: 1; }
+    .env-card-amp { font-style: italic; color: var(--gold); display: block; margin: 3px 0; }
+
+    /* Front face content — sits below the flap zone */
+    .env-front {
+      position: absolute; top: 42%; left: 0; right: 0; bottom: 0;
+      z-index: 5;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; padding: 0 20px 18px;
+    }
+    .env-photo {
+      width: min(80px, 22vw); height: min(80px, 22vw);
+      border-radius: 50%; border: 2px solid var(--gold);
+      overflow: hidden; box-shadow: 0 4px 18px rgba(201,169,110,0.28); flex-shrink: 0;
+    }
+    .env-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .env-names { font-family: 'Cormorant Garamond', serif; font-weight: 300; text-align: center; line-height: 0.95; }
+    .env-name { font-size: clamp(24px, 6.5vw, 36px); display: block; color: var(--text-900); }
+    .env-name-amp { font-size: clamp(17px, 4.5vw, 24px); font-style: italic; color: var(--gold); display: block; margin: 2px 0; }
+    .env-rule { width: 40px; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); }
+    .env-seal {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-d));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: rgba(255,255,255,0.9);
+      box-shadow: 0 2px 8px rgba(154,122,69,0.45);
+    }
+    .env-tap-hint {
+      font-size: 9px; letter-spacing: 3.5px;
+      text-transform: uppercase; color: var(--gold-d); opacity: 0;
     }
 
-    .cover-btn:hover, .cover-btn:active {
-      background: var(--gold);
-      color: #fff;
-      box-shadow: 0 8px 28px rgba(201,169,110,.38);
-      transform: translateY(-2px);
+    /* The animated flap (V pointing down) */
+    #env-flap {
+      position: absolute; top: -1px; left: -1px; right: -1px; height: 50%;
+      background: linear-gradient(160deg, #FFE4EE 0%, #FFD0DE 50%, #FFBDCE 100%);
+      clip-path: polygon(0 0, 100% 0, 50% 72%);
+      transform-origin: top center;
+      z-index: 6;
+      border-radius: 10px 10px 0 0;
+      border-top: 1.5px solid rgba(201,169,110,0.35);
+      border-left: 1.5px solid rgba(201,169,110,0.35);
+      border-right: 1.5px solid rgba(201,169,110,0.35);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    #env-flap::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25) 0%, transparent 60%),
+        radial-gradient(circle at 70% 20%, rgba(255,255,255,0.15) 0%, transparent 50%);
     }
 
-    /* ─── Music Button ─── */
+    /* ════════════════ MUSIC BUTTON ════════════════ */
     #music-btn {
-      position: fixed;
-      bottom: 22px;
-      right: 18px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--gold);
-      border: none;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(201,169,110,.45);
-      z-index: 200;
+      position: fixed; bottom: 22px; right: 18px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--gold); border: none; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(201,169,110,.45); z-index: 200;
       transition: transform .2s, background .2s;
     }
-    #music-btn.muted { background: var(--pink-200); }
+    #music-btn.muted { background: var(--pink-300); }
     #music-btn:hover { transform: scale(1.1); }
-    #music-btn svg { width: 20px; height: 20px; fill: white; }
+    #music-btn svg   { width: 20px; height: 20px; fill: white; }
 
-    /* ─── Invitation Body ─── */
-    #invitation {
-      max-width: 540px;
-      margin: 0 auto;
-      padding: 0 20px 80px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity .85s ease .15s, transform .85s ease .15s;
-    }
-    #invitation.in { opacity: 1; transform: none; }
+    /* ════════════════ INVITATION ════════════════ */
+    #invitation { max-width: 540px; margin: 0 auto; padding: 0 20px 80px; }
 
-    /* Bismillah */
-    .bismillah-section {
-      text-align: center;
-      padding: 60px 0 24px;
-    }
-    .bismillah-arabic {
-      font-family: 'Scheherazade New', serif;
-      font-size: clamp(28px, 7vw, 44px);
-      color: var(--gold-d);
-      line-height: 2;
-    }
-    .bismillah-verse {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(14px, 3.5vw, 16px);
-      color: var(--text-600);
-      line-height: 1.95;
-      max-width: 360px;
-      margin: 14px auto 0;
-    }
-    .bismillah-ref {
-      display: block;
-      font-size: 0.82em;
-      color: var(--gold-d);
-      margin-top: 6px;
-      font-style: normal;
-      letter-spacing: 1px;
-    }
+    .bismillah-section { text-align: center; padding: 68px 0 30px; }
+    .bismillah-arabic { font-family: 'Scheherazade New', serif; font-size: clamp(28px, 7vw, 46px); color: var(--gold-d); line-height: 2; }
+    .bismillah-verse { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(14px, 3.5vw, 16px); color: var(--text-500); line-height: 2; max-width: 360px; margin: 14px auto 0; }
+    .bismillah-ref { display: block; font-size: .82em; color: var(--gold-d); margin-top: 6px; font-style: normal; letter-spacing: 1px; }
 
-    /* Divider */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin: 8px 0;
-    }
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--pink-200), transparent);
-    }
-    .divider-blossom { font-size: 18px; opacity: .65; }
+    .divider { display: flex; align-items: center; gap: 14px; margin: 12px 0; }
+    .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--pink-300), transparent); }
+    .divider-blossom { font-size: 18px; opacity: .6; }
 
-    /* Couple section */
-    .couple-section {
-      text-align: center;
-      padding: 40px 0;
-    }
-    .couple-eyebrow {
-      font-size: 11px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--text-300);
-      font-weight: 500;
-      margin-bottom: 18px;
-    }
-    .couple-names {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      line-height: 0.95;
-    }
-    .cn-name { font-size: clamp(54px, 14vw, 90px); display: block; color: var(--text-900); }
-    .cn-amp  { font-size: clamp(36px, 9vw, 58px); font-style: italic; color: var(--gold); display: block; margin: 6px 0; }
+    .couple-section { text-align: center; padding: 44px 0; }
+    .couple-eyebrow { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--text-300); font-weight: 500; margin-bottom: 20px; }
+    .couple-names { font-family: 'Cormorant Garamond', serif; font-weight: 300; line-height: 0.9; }
+    .inv-name { font-size: clamp(56px, 15vw, 96px); display: block; color: var(--text-900); }
+    .inv-amp  { font-size: clamp(38px, 9.5vw, 62px); font-style: italic; color: var(--gold); display: block; margin: 8px 0; }
 
-    .family-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      margin-top: 28px;
-    }
-    .family-entry { font-size: 14px; color: var(--text-600); line-height: 1.75; }
-    .family-label {
-      display: block;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 3.5px;
-      text-transform: uppercase;
-      color: var(--gold-d);
-      margin-bottom: 3px;
-    }
+    .family-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 30px; }
+    .family-entry { font-size: 14px; color: var(--text-500); line-height: 1.75; }
+    .family-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-d); margin-bottom: 3px; }
 
-    /* Events */
-    .events-section { padding: 16px 0 32px; }
-    .events-eyebrow {
-      text-align: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 16px;
-      color: var(--text-300);
-      margin-bottom: 22px;
-    }
+    .events-section { padding: 16px 0 36px; }
+    .events-eyebrow { text-align: center; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--text-300); margin-bottom: 24px; }
 
     .event-card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 26px 22px;
-      margin-bottom: 14px;
-      border: 1px solid #FFDDE6;
-      box-shadow: 0 4px 28px rgba(255,183,197,.12);
-      position: relative;
-      overflow: hidden;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-radius: 24px; padding: 30px 24px;
+      border: 1px solid rgba(255,183,197,0.32);
+      box-shadow: 0 2px 8px rgba(255,183,197,0.1), 0 16px 48px rgba(201,169,110,0.09);
+      position: relative; overflow: hidden;
+      transition: transform .32s cubic-bezier(.4,0,.2,1), box-shadow .32s;
     }
+    .event-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255,183,197,0.2), 0 24px 64px rgba(201,169,110,0.14); }
     .event-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--sakura), var(--gold));
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--sakura), var(--gold), var(--sakura-d), var(--gold), var(--sakura));
+      background-size: 300% 100%; animation: shimmer 4s linear infinite;
     }
-    .event-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 500;
-      color: var(--text-900);
-      margin-bottom: 16px;
-    }
-    .event-row {
-      display: flex;
-      gap: 11px;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-    .event-icon { font-size: 14px; padding-top: 3px; flex-shrink: 0; }
-    .event-info { font-size: 13.5px; color: var(--text-600); line-height: 1.65; }
+    @keyframes shimmer { 0% { background-position: 300% 0; } 100% { background-position: -300% 0; } }
+
+    .event-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 500; color: var(--text-900); margin-bottom: 20px; }
+    .event-row   { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 11px; }
+    .event-icon  { font-size: 14px; padding-top: 3px; flex-shrink: 0; }
+    .event-info  { font-size: 13.5px; color: var(--text-500); line-height: 1.65; }
     .event-info strong { display: block; color: var(--text-900); font-weight: 600; }
     .map-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 14px;
-      padding: 8px 18px;
-      background: linear-gradient(135deg, var(--sakura), #e09ab0);
-      color: white;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-decoration: none;
-      border-radius: 24px;
-      transition: opacity .2s, transform .2s;
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 18px; padding: 10px 22px;
+      background: linear-gradient(135deg, var(--sakura), var(--sakura-d));
+      color: white; font-size: 10px; font-weight: 700; letter-spacing: 2.5px;
+      text-transform: uppercase; text-decoration: none; border-radius: 24px;
+      box-shadow: 0 4px 18px rgba(232,135,154,.32);
+      transition: opacity .22s, transform .22s, box-shadow .22s;
     }
-    .map-btn:hover { opacity: .86; transform: translateY(-1px); }
+    .map-btn:hover { opacity: .88; transform: translateY(-2px); box-shadow: 0 8px 26px rgba(232,135,154,.45); }
 
-    /* Countdown */
-    .countdown-section {
-      text-align: center;
-      padding: 40px 0;
-    }
-    .countdown-label {
-      font-size: 10px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--text-300);
-      margin-bottom: 26px;
-    }
-    .countdown-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 6px;
-    }
+    .countdown-section { text-align: center; padding: 48px 0; }
+    .countdown-label { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--text-300); margin-bottom: 28px; }
+    .countdown-row { display: flex; align-items: flex-start; justify-content: center; gap: 4px; }
     .cd-unit { text-align: center; }
-    .cd-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(42px, 11vw, 66px);
-      font-weight: 300;
-      color: var(--text-900);
-      line-height: 1;
-      display: block;
-      min-width: 2ch;
-    }
-    .cd-lbl { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-300); margin-top: 4px; }
-    .cd-sep {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 52px;
-      color: var(--gold);
-      line-height: 1;
-      padding-top: 2px;
-      opacity: .6;
-    }
+    .cd-num-wrap { height: clamp(54px, 13.5vw, 80px); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .cd-num { font-family: 'Cormorant Garamond', serif; font-size: clamp(54px, 13.5vw, 80px); font-weight: 300; color: var(--text-900); line-height: 1; min-width: 2ch; text-align: center; display: block; }
+    .cd-lbl { font-size: 9px; letter-spacing: 3.5px; text-transform: uppercase; color: var(--text-300); margin-top: 6px; }
+    .cd-sep { font-family: 'Cormorant Garamond', serif; font-size: clamp(46px, 11.5vw, 68px); color: var(--gold); line-height: 1; padding-top: 2px; opacity: .55; align-self: flex-start; }
 
-    /* Footer */
-    .footer-section {
-      text-align: center;
-      padding: 36px 20px 20px;
-      border-top: 1px solid #FFDDE6;
-    }
-    .footer-blossoms { font-size: 26px; opacity: .5; margin-bottom: 16px; letter-spacing: 8px; }
-    .footer-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 17px;
-      color: var(--text-600);
-      line-height: 1.85;
-    }
-    .footer-couple {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 500;
-      color: var(--text-900);
-      margin-top: 8px;
-    }
-    .footer-sub {
-      font-size: 12px;
-      color: var(--text-300);
-      margin-top: 14px;
-      letter-spacing: 1px;
-    }
+    .footer-section { text-align: center; padding: 40px 20px 24px; border-top: 1px solid rgba(255,183,197,0.35); }
+    .footer-blossoms { font-size: 24px; opacity: .45; margin-bottom: 18px; letter-spacing: 10px; }
+    .footer-quote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: var(--text-500); line-height: 1.9; }
+    .footer-couple { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; color: var(--text-900); margin-top: 8px; }
+    .footer-sub { font-size: 12px; color: var(--text-300); margin-top: 14px; letter-spacing: 1px; }
   </style>
 </head>
 <body>
 
-<!-- Sakura petal canvas -->
 <canvas id="petal-canvas"></canvas>
 
-<!-- Background music — replace nasheed.mp3 with the actual file name when ready -->
 <audio id="bgm" loop preload="none">
   <source src="nasheed.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Music toggle (appears after cover) -->
 <button id="music-btn" aria-label="Toggle music">
-  <!-- Note icon -->
   <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
 </button>
 
-<!-- ══════════ COVER ══════════ -->
-<section id="cover">
+<!-- ══════════ SCENE (envelope) ══════════ -->
+<div id="scene">
+  <div id="envelope" onclick="openEnvelope()">
+    <div class="env-body"></div>
+    <div class="env-interior"><span class="env-interior-text">with love</span></div>
+    <div class="env-bottom-fold"></div>
 
-  <div class="cover-photo-wrap">
-    <div class="cover-photo-ring">
-      <!-- TO ADD PHOTO: replace the 🌸 below with:
-           <img src="images/couple.jpg" alt="Ahsan & Afra">
-      -->
-      🌸
+    <div id="env-card">
+      <div class="env-card-blossom">🌸</div>
+      <div class="env-card-names">Ahsan<span class="env-card-amp">&amp;</span>Afra</div>
     </div>
-    <span class="cover-deco tl">🌸</span>
-    <span class="cover-deco tr">🌸</span>
-    <span class="cover-deco bl">🌿</span>
-    <span class="cover-deco br">🌿</span>
+
+    <div class="env-front">
+      <div class="env-photo">
+        <img src="images/akru_wedding_pic.jpeg" alt="Ahsan & Afra">
+      </div>
+      <div class="env-names">
+        <span class="env-name">Ahsan</span>
+        <span class="env-name-amp">&amp;</span>
+        <span class="env-name">Afra</span>
+      </div>
+      <div class="env-rule"></div>
+      <div class="env-seal">✦</div>
+      <div class="env-tap-hint">Tap to open</div>
+    </div>
+
+    <div id="env-flap"></div>
   </div>
-
-  <div class="cover-eyebrow">You are cordially invited</div>
-
-  <div class="cover-names">
-    <span class="cover-first">Ahsan</span>
-    <span class="cover-amp">&amp;</span>
-    <span class="cover-last">Afra</span>
-  </div>
-
-  <div class="cover-rule"></div>
-
-  <button class="cover-btn" onclick="openInvitation()">Open Invitation ✦</button>
-
-</section>
+</div>
 
 <!-- ══════════ INVITATION ══════════ -->
 <main id="invitation" hidden>
 
-  <!-- Bismillah -->
   <div class="bismillah-section">
     <div class="bismillah-arabic">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
     <p class="bismillah-verse">
@@ -451,266 +292,221 @@
     </p>
   </div>
 
-  <div class="divider">
-    <div class="divider-line"></div>
-    <span class="divider-blossom">🌸</span>
-    <div class="divider-line"></div>
+  <div class="divider rev">
+    <div class="divider-line"></div><span class="divider-blossom">🌸</span><div class="divider-line"></div>
   </div>
 
-  <!-- Couple -->
-  <div class="couple-section">
+  <div class="couple-section rev">
     <p class="couple-eyebrow">Together with their families</p>
     <div class="couple-names">
-      <span class="cn-name">Ahsan</span>
-      <span class="cn-amp">&amp;</span>
-      <span class="cn-name">Afra</span>
+      <span class="inv-name">Ahsan</span>
+      <span class="inv-amp">&amp;</span>
+      <span class="inv-name">Afra</span>
     </div>
     <div class="family-grid">
-      <div class="family-entry">
+      <div class="family-entry rev-c">
         <span class="family-label">Son of</span>
-        Mr. [Father's Name] &amp; Mrs. [Mother's Name]
+        Hamid Irshad Hussain &amp; Zahira Thayal House
       </div>
-      <div class="family-entry">
+      <div class="family-entry rev-c">
         <span class="family-label">Daughter of</span>
-        Mr. [Father's Name] &amp; Mrs. [Mother's Name]
+        Anwar Sadath Abdul Kadar &amp; Saleena Anwar Kochammed Kutty
       </div>
     </div>
   </div>
 
-  <div class="divider">
-    <div class="divider-line"></div>
-    <span class="divider-blossom">🌸</span>
-    <div class="divider-line"></div>
+  <div class="divider rev">
+    <div class="divider-line"></div><span class="divider-blossom">🌸</span><div class="divider-line"></div>
   </div>
 
-  <!-- Events -->
-  <div class="events-section">
+  <div class="events-section rev">
     <p class="events-eyebrow">Joyfully invite you to celebrate</p>
-
-    <!-- Wedding -->
     <div class="event-card">
       <div class="event-title">Wedding</div>
       <div class="event-row">
         <span class="event-icon">📅</span>
         <div class="event-info">
-          <strong>[Day], [Date], [Year]</strong>
-          [Time] onwards
+          <strong>Sunday, 08 November 2026</strong>
+          11:00 AM – 3:00 PM
         </div>
       </div>
       <div class="event-row">
         <span class="event-icon">📍</span>
         <div class="event-info">
-          <strong>[Venue Name]</strong>
-          [Address, City]
+          <strong>Chakolas Pavilion</strong>
+          NH966A, North Kalamassery, Ernakulam, Kochi, Kerala
         </div>
       </div>
-      <a class="map-btn" href="https://maps.google.com/?q=Venue+Address" target="_blank" rel="noopener">
+      <a class="map-btn"
+         href="https://www.google.com/maps/place/Chakolas+Pavilion/@10.0647924,76.3249122,17z"
+         target="_blank" rel="noopener">
         📍 View on Map
       </a>
     </div>
   </div>
 
-  <div class="divider">
-    <div class="divider-line"></div>
-    <span class="divider-blossom">🌸</span>
-    <div class="divider-line"></div>
+  <div class="divider rev">
+    <div class="divider-line"></div><span class="divider-blossom">🌸</span><div class="divider-line"></div>
   </div>
 
-  <!-- Countdown -->
-  <div class="countdown-section">
+  <div class="countdown-section rev">
     <div class="countdown-label">Counting down to the big day</div>
     <div class="countdown-row">
-      <div class="cd-unit">
-        <span class="cd-num" id="cd-d">--</span>
-        <div class="cd-lbl">Days</div>
-      </div>
+      <div class="cd-unit"><div class="cd-num-wrap"><span class="cd-num" id="cd-d">--</span></div><div class="cd-lbl">Days</div></div>
       <div class="cd-sep">:</div>
-      <div class="cd-unit">
-        <span class="cd-num" id="cd-h">--</span>
-        <div class="cd-lbl">Hrs</div>
-      </div>
+      <div class="cd-unit"><div class="cd-num-wrap"><span class="cd-num" id="cd-h">--</span></div><div class="cd-lbl">Hrs</div></div>
       <div class="cd-sep">:</div>
-      <div class="cd-unit">
-        <span class="cd-num" id="cd-m">--</span>
-        <div class="cd-lbl">Min</div>
-      </div>
+      <div class="cd-unit"><div class="cd-num-wrap"><span class="cd-num" id="cd-m">--</span></div><div class="cd-lbl">Min</div></div>
       <div class="cd-sep">:</div>
-      <div class="cd-unit">
-        <span class="cd-num" id="cd-s">--</span>
-        <div class="cd-lbl">Sec</div>
-      </div>
+      <div class="cd-unit"><div class="cd-num-wrap"><span class="cd-num" id="cd-s">--</span></div><div class="cd-lbl">Sec</div></div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <div class="footer-section">
+  <div class="footer-section rev">
     <div class="footer-blossoms">🌸 🌿 🌸</div>
-    <div class="footer-quote">
-      With love &amp; joy,
-    </div>
+    <div class="footer-quote">With love &amp; joy,</div>
     <div class="footer-couple">Ahsan &amp; Afra</div>
     <p class="footer-sub">We look forward to celebrating with you ♡</p>
   </div>
 
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
 <script>
-// ═══════════════════════════════════
-// SAKURA PETALS — Canvas Animation
-// ═══════════════════════════════════
+// ── SAKURA PETALS ──
 const canvas = document.getElementById('petal-canvas');
 const ctx    = canvas.getContext('2d');
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); addEventListener('resize', resize);
 
-function resize() {
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
-
-const PETAL_COLORS = ['#FFB7C5','#FFCDD6','#FF9BAC','#FFD6DE','#FFC0CB','#FFAEC0'];
-const PETAL_COUNT  = 24;
-const petals = [];
-
+const HUES = [
+  { i: 'rgba(255,242,246,0.96)', o: 'rgba(255,148,172,0.72)' },
+  { i: 'rgba(255,230,238,0.92)', o: 'rgba(230,110,145,0.68)' },
+  { i: 'rgba(255,220,232,0.9)',  o: 'rgba(232,135,154,0.72)' },
+  { i: 'rgba(255,248,251,0.95)', o: 'rgba(255,168,192,0.66)' },
+];
 class Petal {
-  constructor(init) {
-    this.reset(init);
-  }
+  constructor(init) { this.reset(init); }
   reset(init = false) {
-    this.x        = Math.random() * canvas.width;
-    this.y        = init ? Math.random() * -canvas.height * 1.5 : -20;
-    this.r        = Math.random() * 9 + 5;         // 5–14 px radius
-    this.vx       = (Math.random() - 0.5) * 0.7;
-    this.vy       = Math.random() * 1.0 + 0.45;
-    this.angle    = Math.random() * Math.PI * 2;
-    this.spin     = (Math.random() - 0.5) * 0.035;
-    this.swayAng  = Math.random() * Math.PI * 2;
-    this.swaySpd  = Math.random() * 0.018 + 0.008;
-    this.sway     = Math.random() * 0.9 + 0.2;
-    this.color    = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
-    this.alpha    = Math.random() * 0.45 + 0.3;
+    this.x = Math.random() * canvas.width;
+    this.y = init ? Math.random() * -canvas.height * 1.3 : -25;
+    this.r = Math.random() * 11 + 5;
+    this.vx = (Math.random() - 0.5) * 0.55; this.vy = Math.random() * 1.05 + 0.38;
+    this.ang = Math.random() * Math.PI * 2; this.spin = (Math.random() - 0.5) * 0.032;
+    this.sw = Math.random() * Math.PI * 2; this.swSpd = Math.random() * 0.015 + 0.006;
+    this.swAmt = Math.random() * 1.1 + 0.25;
+    this.hue = HUES[Math.floor(Math.random() * HUES.length)];
+    this.alpha = Math.random() * 0.38 + 0.34; this.tilt = (Math.random() - 0.5) * 0.4;
   }
   update() {
-    this.swayAng += this.swaySpd;
-    this.x       += this.vx + Math.sin(this.swayAng) * this.sway;
-    this.y       += this.vy;
-    this.angle   += this.spin;
-    if (this.y > canvas.height + 30) this.reset(false);
+    this.sw += this.swSpd; this.x += this.vx + Math.sin(this.sw) * this.swAmt;
+    this.y += this.vy; this.ang += this.spin + Math.sin(this.sw * 0.4) * 0.004;
+    if (this.y > canvas.height + 32 || this.x < -70 || this.x > canvas.width + 70) this.reset();
   }
   draw() {
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle);
+    ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.ang);
+    ctx.scale(1 - Math.abs(Math.sin(this.sw)) * Math.abs(this.tilt) * 0.38, 1);
     ctx.globalAlpha = this.alpha;
-
-    // Sakura petal — two overlapping ellipses at slight angle
+    const r = this.r;
+    const g = ctx.createRadialGradient(0, -r * 0.18, 0, 0, r * 0.1, r * 1.15);
+    g.addColorStop(0, this.hue.i); g.addColorStop(0.62, 'rgba(255,183,197,0.78)'); g.addColorStop(1, this.hue.o);
     ctx.beginPath();
-    ctx.ellipse(0, 0, this.r * 0.55, this.r, 0, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.ellipse(0, 0, this.r * 0.55, this.r, Math.PI / 5, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-
-    // Soft highlight
-    ctx.beginPath();
-    ctx.ellipse(0, -this.r * 0.2, this.r * 0.25, this.r * 0.35, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.28)';
-    ctx.fill();
-
+    ctx.moveTo(0, -r);
+    ctx.bezierCurveTo( r * 0.88, -r * 0.48,  r * 0.92,  r * 0.38, 0,  r * 0.78);
+    ctx.bezierCurveTo(-r * 0.92,  r * 0.38, -r * 0.88, -r * 0.48, 0, -r);
+    ctx.closePath(); ctx.fillStyle = g; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, -r * 0.78); ctx.quadraticCurveTo(r * 0.08, r * 0.12, 0, r * 0.65);
+    ctx.strokeStyle = 'rgba(255,255,255,0.32)'; ctx.lineWidth = 0.55; ctx.stroke();
     ctx.restore();
   }
 }
+const petals = Array.from({ length: 28 }, () => new Petal(true));
+(function loop() { ctx.clearRect(0, 0, canvas.width, canvas.height); petals.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(loop); })();
 
-for (let i = 0; i < PETAL_COUNT; i++) petals.push(new Petal(true));
+// ── GSAP: Envelope entrance ──
+gsap.registerPlugin(ScrollTrigger);
 
-(function loop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  petals.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(loop);
-})();
+const entranceTl = gsap.timeline({ delay: 0.35 });
+entranceTl
+  .to('#envelope',    { opacity: 1, y: 0, duration: 0.9, ease: 'back.out(1.4)', from: { y: -55, opacity: 0 } })
+  .from('.env-photo', { scale: 0.65, opacity: 0, duration: 0.7, ease: 'back.out(1.7)' }, '-=0.32')
+  .from('.env-names', { y: 18, opacity: 0, duration: 0.65, ease: 'power2.out' }, '-=0.28')
+  .from('.env-rule',  { scaleX: 0, duration: 0.6, ease: 'power2.inOut' }, '-=0.22')
+  .from('.env-seal',  { scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(2.2)' }, '-=0.28')
+  .to('.env-tap-hint',{ opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.1');
 
+gsap.to('.env-tap-hint', { opacity: 0.35, duration: 1.1, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.6 });
+gsap.to('#envelope',     { y: -8, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.2 });
 
-// ═══════════════════════════════════
-// COVER → INVITATION TRANSITION
-// ═══════════════════════════════════
-function openInvitation() {
-  const cover = document.getElementById('cover');
-  const inv   = document.getElementById('invitation');
-  const btn   = document.getElementById('music-btn');
+// ── ENVELOPE OPEN ──
+let opened = false;
+function openEnvelope() {
+  if (opened) return;
+  opened = true;
+  gsap.killTweensOf(['#envelope', '.env-tap-hint']);
 
-  cover.classList.add('exit');
-
-  setTimeout(() => {
-    cover.hidden = true;
-    inv.hidden   = false;
-    btn.style.display = 'flex';
-
-    // Force reflow then animate in
-    requestAnimationFrame(() => requestAnimationFrame(() => inv.classList.add('in')));
-
-    tryAutoplay();
-  }, 900);
+  gsap.timeline({ onComplete: revealInvitation })
+    .to('.env-tap-hint', { opacity: 0, duration: 0.2, ease: 'power1.in' })
+    .to('.env-seal',     { scale: 0, opacity: 0, duration: 0.28, ease: 'back.in(1.8)' }, '-=0.1')
+    .to('#env-flap',     { rotateX: -92, duration: 1.08, ease: 'power3.inOut' }, '-=0.1')
+    .to('#env-card',     { y: '-118%', duration: 1.0, ease: 'power2.out' }, '-=0.58')
+    .to('#envelope',     { opacity: 0, scale: 0.9, y: 40, duration: 0.52, ease: 'power2.in' }, '-=0.08')
+    .to('#scene',        { opacity: 0, duration: 0.32, ease: 'power1.inOut' }, '-=0.24');
 }
 
+function revealInvitation() {
+  document.getElementById('scene').hidden = true;
+  document.getElementById('invitation').hidden = false;
+  document.getElementById('music-btn').style.display = 'flex';
+  requestAnimationFrame(() => { initScrollReveals(); tryAutoplay(); });
+}
 
-// ═══════════════════════════════════
-// MUSIC
-// ═══════════════════════════════════
-const bgm    = document.getElementById('bgm');
+// ── SCROLL REVEALS ──
+function initScrollReveals() {
+  gsap.from('.bismillah-arabic', { y: 30, opacity: 0, duration: 1.0, ease: 'power2.out', delay: 0.12 });
+  gsap.from('.bismillah-verse',  { y: 22, opacity: 0, duration: 0.9, ease: 'power2.out', delay: 0.4 });
+
+  document.querySelectorAll('.rev').forEach(el => {
+    gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 83%', toggleActions: 'play none none none' }, y: 44, opacity: 0, duration: 0.92, ease: 'power2.out' });
+  });
+  gsap.from(['.inv-name', '.inv-amp'], { scrollTrigger: { trigger: '.couple-names', start: 'top 82%' }, y: 52, opacity: 0, duration: 0.88, stagger: 0.14, ease: 'power3.out' });
+  gsap.from('.rev-c',     { scrollTrigger: { trigger: '.family-grid',  start: 'top 84%' }, y: 22, opacity: 0, duration: 0.7, stagger: 0.18, ease: 'power2.out' });
+  gsap.from('.event-card',{ scrollTrigger: { trigger: '.event-card',   start: 'top 84%' }, y: 44, opacity: 0, scale: 0.97, duration: 0.85, ease: 'power2.out' });
+  gsap.from('.cd-unit',   { scrollTrigger: { trigger: '.countdown-section', start: 'top 84%' }, y: 34, opacity: 0, duration: 0.72, stagger: 0.1, ease: 'power2.out' });
+}
+
+// ── MUSIC ──
+const bgm = document.getElementById('bgm');
 const musBtn = document.getElementById('music-btn');
-let playing  = false;
-
+let playing = false;
 function tryAutoplay() {
   bgm.volume = 0.32;
-  bgm.play().then(() => {
-    playing = true;
-    musBtn.classList.remove('muted');
-  }).catch(() => {
-    // Autoplay blocked — user can tap the button
-    musBtn.classList.add('muted');
-  });
+  bgm.play().then(() => { playing = true; musBtn.classList.remove('muted'); }).catch(() => { musBtn.classList.add('muted'); });
 }
-
 musBtn.addEventListener('click', () => {
-  if (playing) {
-    bgm.pause();
-    playing = false;
-    musBtn.classList.add('muted');
-  } else {
-    bgm.play();
-    playing = true;
-    musBtn.classList.remove('muted');
-  }
+  if (playing) { bgm.pause(); playing = false; musBtn.classList.add('muted'); }
+  else         { bgm.play();  playing = true;  musBtn.classList.remove('muted'); }
 });
 
-
-// ═══════════════════════════════════
-// COUNTDOWN
-// ═══════════════════════════════════
-// ← UPDATE THIS DATE to the actual wedding day
-const WEDDING = new Date(2026, 5, 28, 12, 0, 0); // June 28 2026, 12:00
-
+// ── COUNTDOWN with flip ──
+const WEDDING = new Date(2026, 10, 8, 11, 0, 0); // Nov 8 2026 11:00 AM
+const els = { d: document.getElementById('cd-d'), h: document.getElementById('cd-h'), m: document.getElementById('cd-m'), s: document.getElementById('cd-s') };
+function flip(el, val) {
+  if (el.textContent === val) return;
+  gsap.to(el, { y: -9, opacity: 0, duration: 0.17, ease: 'power1.in', onComplete() { el.textContent = val; gsap.fromTo(el, { y: 9, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, ease: 'power1.out' }); } });
+}
 function tick() {
   const diff = WEDDING - Date.now();
-  if (diff <= 0) {
-    ['cd-d','cd-h','cd-m','cd-s'].forEach(id => document.getElementById(id).textContent = '00');
-    return;
-  }
-  const d = Math.floor(diff / 864e5);
-  const h = Math.floor(diff % 864e5 / 36e5);
-  const m = Math.floor(diff % 36e5 / 6e4);
-  const s = Math.floor(diff % 6e4 / 1e3);
-  const pad = n => String(n).padStart(2,'0');
-  document.getElementById('cd-d').textContent = pad(d);
-  document.getElementById('cd-h').textContent = pad(h);
-  document.getElementById('cd-m').textContent = pad(m);
-  document.getElementById('cd-s').textContent = pad(s);
+  if (diff <= 0) { Object.values(els).forEach(e => e.textContent = '00'); return; }
+  const pad = n => String(n).padStart(2, '0');
+  flip(els.d, pad(Math.floor(diff / 864e5)));
+  flip(els.h, pad(Math.floor(diff % 864e5 / 36e5)));
+  flip(els.m, pad(Math.floor(diff % 36e5  / 6e4)));
+  flip(els.s, pad(Math.floor(diff % 6e4   / 1e3)));
 }
-tick();
-setInterval(tick, 1000);
+tick(); setInterval(tick, 1000);
 </script>
 </body>
 </html>
