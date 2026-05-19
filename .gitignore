@@ -1,2 +1,3 @@
 .DS_Store
 # nasheed.mp3 is included — run download-nasheed.sh to generate it first
+.vercel
